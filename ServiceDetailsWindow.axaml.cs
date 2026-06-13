@@ -9,6 +9,10 @@ namespace PasswordManager;
 
 public partial class ServiceDetailsWindow : Window
 {
+    public ServiceDetailsWindow()
+    {
+        InitializeComponent();
+    }
     public ServiceDetailsWindow(ServiceItem? selected)
     {
         InitializeComponent();

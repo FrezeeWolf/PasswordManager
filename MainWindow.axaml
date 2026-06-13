@@ -30,7 +30,7 @@
             <!--Основной код-->
             <Grid>
                  <StackPanel Classes="Wrapper">
-                    <Label Classes="Input" Content="Введите мастер-пароль"/>
+                    <Label Classes="Input"  x:Name="labelMasterKey"/>
                     <TextBox Classes="Input" x:Name="inputMasterKey"/>
                     <Button Classes="Input" Content="Done" Click="DoneClick" IsDefault="True"/>
                 </StackPanel>
