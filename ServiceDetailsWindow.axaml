@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PasswordManager.ServiceDetailsWindow"
+        Title="ServiceDetailsWindow"
+
+        TransparencyLevelHint="AcrylicBlur"
+        Background="#3C000000"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1">
+
+        <Window.Styles>
+            <StyleInclude Source="/Styles/ServiceDetailsWindowStyles.axaml" />
+        </Window.Styles>
+
+        <DockPanel>
+            <!--Шапка приложения-->
+            <Border DockPanel.Dock="Top" 
+                    Height="30" 
+                    Background="#1E1E1E" 
+                    PointerPressed="HeaderPointerPressed">
+                <TextBlock Text="PasswordManager" 
+                        Foreground="#ACFFFFFF" 
+                        VerticalAlignment="Center" 
+                        Margin="40,0,0,0"
+                        />
+            </Border>
+            <!--Основной код-->
+            <Grid>
+                 <StackPanel Classes="Wrapper">
+                    <Label Classes="Input" Content="Название сервиса"/>
+                    <TextBox Classes="Input" x:Name="ServiceName"/>
+                    <Label Classes="Input" Content="Логин"/>
+                    <TextBox Classes="Input" x:Name="Login"/>
+                    <Label Classes="Input" Content="Пароль"/>
+                    <TextBox Classes="Input" x:Name="Password"/>
+                    <Label Classes="Input" Content="Доп информация"/>
+                    <TextBox Classes="Input" x:Name="Description"/>
+
+
+                    <StackPanel Orientation="Horizontal">
+                      <Button Classes="Input" Content="Back" Click="BackClick" IsCancel="True"/>
+                      <Button Classes="Input" Content="Delete" Click="DeleteClick"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+</Window>
