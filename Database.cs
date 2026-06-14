@@ -24,7 +24,8 @@ class Database
                     (
                         Id INTEGER PRIMARY KEY,
                         PasswordHash TEXT NOT NULL,
-                        Salt TEXT NOT NULL
+                        Salt TEXT NOT NULL,
+                        EncryptedDEK TEXT NOT NULL
                     );
 
                     CREATE TABLE IF NOT EXISTS Services
@@ -32,7 +33,7 @@ class Database
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Name TEXT NOT NULL,
                         Login TEXT NOT NULL,
-                        Password TEXT NOT NULL,
+                        EncryptedPassword TEXT NOT NULL,
                         Description TEXT
                     );
                     """;

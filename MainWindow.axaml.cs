@@ -120,12 +120,20 @@ public partial class MainWindow : Window
         }
     }
 
+    private string EncryptDEK()
+    {
+        byte[] dek = RandomNumberGenerator.GetBytes(32);
+        var DEK = Convert.ToBase64String(dek);
+        string enteredPass = inputMasterKey.Text ?? "";
+        return DEK;
+    }
     private void SetMasterPassword()
     {
         string enteredPass = inputMasterKey.Text ?? "";
         string salt = Guid.NewGuid().ToString();
         string hash = ComputeHash(enteredPass, salt);
-
+        string dek = EncryptDEK();
+        
         var connectionString = "Data Source=passwords.db";
         try
         {
@@ -134,11 +142,12 @@ public partial class MainWindow : Window
             using var command = connection.CreateCommand();
             command.CommandText =
             """
-            INSERT INTO MasterPassword (PasswordHash, Salt)
-            VALUES ($hash, $salt);
+            INSERT INTO MasterPassword (PasswordHash, Salt, EncryptedDEK)
+            VALUES ($hash, $salt, $dek);
             """;
             command.Parameters.AddWithValue("$hash", hash);
             command.Parameters.AddWithValue("$salt", salt);
+            command.Parameters.AddWithValue("$dek", dek);
             command.ExecuteNonQuery();
             
         }

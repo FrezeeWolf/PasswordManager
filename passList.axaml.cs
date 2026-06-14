@@ -1,9 +1,13 @@
-using Avalonia;
+using System;
+using System.IO;
+using System.Collections.Generic;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using System.Collections.ObjectModel;
+using Microsoft.Data.Sqlite;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace PasswordManager;
@@ -45,6 +49,42 @@ public partial class passList : Window
         var addWindow = new addWindow();
         addWindow.Show();
         this.Close();
+    }
+
+    private List<ServiceItem> GetServiceData()
+    {
+        var connectionSring = "Data Source=passwords.db";
+
+        using var connection = new SqliteConnection(connectionSring);
+        connection.Open();
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText =  """
+                SELECT Id, Name, Login, EncryptedPassword, Description
+                FROM Services
+                """;
+
+            var services = new List<ServiceItem>();
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                services.Add(new ServiceItem
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Login = reader.GetString(2),
+                    Password = reader.GetString(3),
+                    Description = reader.GetString(4)
+                });
+            }
+            return services;
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error.txt", ex.ToString());
+            return new List<ServiceItem>();
+        }
     }
 
     private void ServiceButtonClick(object? sender, RoutedEventArgs e)
@@ -93,34 +133,16 @@ public partial class passList : Window
         InitializeComponent();
         DataContext = this;
 
-        // 1. Имитируем чтение из базы данных (замените на свой код работы с БД)
-        LoadDataFromDatabase();
+        var serviceData = GetServiceData();
+        foreach (var service in serviceData)
+        {
+            Services.Add(service);
+        }
 
-        // 2. Привязываем коллекцию к нашему ListBox
         if (ServicesList != null)
         {
             ServicesList.ItemsSource = Services;
         }
-    }
-
-    private void LoadDataFromDatabase()
-    {
-        // Здесь будет ваш запрос к SQLite / PostgreSQL. 
-        // Пока заполним тестовыми данными, как на макете:
-        Services.Add(new ServiceItem { Id = 1, Name = "Google", Login = "user@gmail.com", Password = "password123" });
-        Services.Add(new ServiceItem { Id = 2, Name = "garden.com", Login = "user@garden.com", Password = "password456" });
-        Services.Add(new ServiceItem { Id = 3, Name = "2 phone", Login = "user@phone.com", Password = "password789" });
-        Services.Add(new ServiceItem { Id = 4, Name = "GitHub", Login = "user@github.com", Password = "password012" });
-        Services.Add(new ServiceItem { Id = 5, Name = "Notion", Login = "user@notion.com", Password = "password345" });
-        Services.Add(new ServiceItem { Id = 6, Name = "Spotify", Login = "user@spotify.com", Password = "password678" });
-        Services.Add(new ServiceItem { Id = 7, Name = "Telegram", Login = "user@telegram.com", Password = "password901" });
-        Services.Add(new ServiceItem { Id = 8, Name = "Google", Login = "user@gmail.com", Password = "password234" });
-        Services.Add(new ServiceItem { Id = 9, Name = "garden.com", Login = "user@garden.com", Password = "password567" });
-        Services.Add(new ServiceItem { Id = 10, Name = "2 phone", Login = "user@phone.com", Password = "password890" });
-        Services.Add(new ServiceItem { Id = 11, Name = "GitHub", Login = "user@github.com", Password = "password123" });
-        Services.Add(new ServiceItem { Id = 12, Name = "Notion", Login = "user@notion.com", Password = "password456" });
-        Services.Add(new ServiceItem { Id = 13, Name = "Spotify", Login = "user@spotify.com", Password = "password789" });
-        Services.Add(new ServiceItem { Id = 14, Name = "Telegram", Login = "user@telegram.com", Password = "password012" });
     }
 }
 
