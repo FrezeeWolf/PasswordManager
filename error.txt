@@ -1,7 +1,0 @@
-Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 19: 'NOT NULL constraint failed: MasterPassword.EncryptedDEK'.
-   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
-   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
-   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
-   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
-   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
-   at PasswordManager.MainWindow.SetMasterPassword() in C:\Users\FW\Documents\NET\GitRepos\PasswordManager\MainWindow.axaml.cs:line 142

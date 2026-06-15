@@ -22,19 +22,24 @@ class Database
                 command.CommandText = """
                     CREATE TABLE IF NOT EXISTS MasterPassword
                     (
-                        Id INTEGER PRIMARY KEY,
                         PasswordHash TEXT NOT NULL,
                         Salt TEXT NOT NULL,
-                        EncryptedDEK TEXT NOT NULL
+                        EncryptedDEK BLOB NOT NULL,
+                        Nonce BLOB NOT NULL,
+                        Tag BLOB NOT NULL
                     );
 
                     CREATE TABLE IF NOT EXISTS Services
                     (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Name TEXT NOT NULL,
-                        Login TEXT NOT NULL,
-                        EncryptedPassword TEXT NOT NULL,
-                        Description TEXT
+                        Login BLOB NOT NULL,
+                        EncryptedPassword BLOB NOT NULL,
+                        Description TEXT,
+                        PassNonce BLOB NOT NULL,
+                        PassTag BLOB NOT NULL,
+                        LoginNonce BLOB NOT NULL,
+                        LoginTag BLBO NOT NULL
                     );
                     """;
 

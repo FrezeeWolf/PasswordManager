@@ -7,6 +7,7 @@ using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using System.Text;
 
+
 namespace PasswordManager;
 
 public partial class MainWindow : Window
@@ -17,6 +18,11 @@ public partial class MainWindow : Window
         SetOrEnter();
     }
 
+    public static class Session
+    {
+        public static byte[]? DEK {get; set;}
+    }
+
     //Шапка приложения
     private void HeaderPointerPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -25,6 +31,8 @@ public partial class MainWindow : Window
             this.BeginMoveDrag(e);
         }
     }
+
+    string Salt = Guid.NewGuid().ToString();
 
     private static bool IsMasterPasswordSet()
     {
@@ -106,11 +114,16 @@ public partial class MainWindow : Window
         string enteredPass = inputMasterKey.Text ?? "";
         var (storedHash, storedSalt) = GetMasterPasswordData();
         var hashOfEntered = ComputeHash(enteredPass, storedSalt);
+        byte[] masterKey = DeriveKey(enteredPass, storedSalt);
+        var (encryptedDEK, nonce, tag) = DEKInfo();
         if (hashOfEntered == storedHash)
         {
+            //декрипт для дальнейшего использования
+            byte[] dek = Decrypt(encryptedDEK, nonce, tag, masterKey);
+            Session.DEK = dek; 
+
             var passList = new passList();
             passList.Show();
-
             this.Close();
         }
         else
@@ -120,20 +133,42 @@ public partial class MainWindow : Window
         }
     }
 
-    private string EncryptDEK()
+
+
+    private byte[] DeriveKey(string password, string salt)
+    {
+        return Rfc2898DeriveBytes.Pbkdf2(
+            password,
+            Encoding.UTF8.GetBytes(salt),
+            600000,
+            HashAlgorithmName.SHA256,
+            32);
+    }
+    private (byte[] encdek, byte[] nonce, byte[] tag) Encrypt(byte[] DEK, byte[] masterKey)
+    {
+        byte[] nonce = RandomNumberGenerator.GetBytes(12);
+
+        byte[] encryptedDek = new byte[DEK.Length];
+        byte[] tag = new byte[16];
+
+        using var aes = new AesGcm(masterKey, 16);
+        aes.Encrypt(nonce, DEK, encryptedDek, tag);
+        return (encryptedDek, nonce, tag);
+    }
+    private (byte[] encdek, byte[] nonce, byte[] tag) EncryptDEK(byte[] masterKey)
     {
         byte[] dek = RandomNumberGenerator.GetBytes(32);
-        var DEK = Convert.ToBase64String(dek);
-        string enteredPass = inputMasterKey.Text ?? "";
-        return DEK;
+        var (encryptedDEK, nonce, tag) = Encrypt(dek, masterKey);
+        return (encryptedDEK, nonce, tag);
     }
-    private void SetMasterPassword()
+    private void SetMasterPassword(string Salt)
     {
         string enteredPass = inputMasterKey.Text ?? "";
-        string salt = Guid.NewGuid().ToString();
+        string salt = Salt;
         string hash = ComputeHash(enteredPass, salt);
-        string dek = EncryptDEK();
-        
+        byte[] masterKey = DeriveKey(enteredPass, salt);
+        var (encryptedDEK, nonce, tag) = EncryptDEK(masterKey);
+
         var connectionString = "Data Source=passwords.db";
         try
         {
@@ -142,14 +177,19 @@ public partial class MainWindow : Window
             using var command = connection.CreateCommand();
             command.CommandText =
             """
-            INSERT INTO MasterPassword (PasswordHash, Salt, EncryptedDEK)
-            VALUES ($hash, $salt, $dek);
+            INSERT INTO MasterPassword (PasswordHash, Salt, EncryptedDEK, Nonce, Tag)
+            VALUES ($hash, $salt, $dek, $nonce, $tag);
             """;
             command.Parameters.AddWithValue("$hash", hash);
             command.Parameters.AddWithValue("$salt", salt);
-            command.Parameters.AddWithValue("$dek", dek);
+            command.Parameters.AddWithValue("$dek", encryptedDEK);
+            command.Parameters.AddWithValue("$nonce", nonce);
+            command.Parameters.AddWithValue("$tag", tag);
             command.ExecuteNonQuery();
-            
+
+            //декрипт для дальнейшего использования
+            byte[] dek = Decrypt(encryptedDEK, nonce, tag, masterKey);
+            Session.DEK = dek;
         }
         catch (Exception ex)
         {
@@ -167,6 +207,46 @@ public partial class MainWindow : Window
             labelMasterKey.Content = "Установите мастер-пароль";
         }
     }
+
+    private (byte[] encryptedDEK, byte[] nonce, byte[] tag) DEKInfo()
+    {
+        var connectionString = "Data Source=passwords.db";
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText =
+            """
+            SELECT EncryptedDEK, Nonce, Tag
+            FROM MasterPassword
+            """;
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return (
+                    reader.GetFieldValue<byte[]>(0), 
+                    reader.GetFieldValue<byte[]>(1), 
+                    reader.GetFieldValue<byte[]>(2));
+            }
+            return (Array.Empty<byte>(), Array.Empty<byte>(), Array.Empty<byte>());
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error.txt", ex.ToString());
+            return (Array.Empty<byte>(), Array.Empty<byte>(), Array.Empty<byte>());
+        }
+    }
+
+    private byte[] Decrypt(byte[] encryptedDEK, byte[] nonce, byte[] tag, byte[] masterKey)
+    {
+        byte[] decryptedDEK = new byte[encryptedDEK.Length];
+
+        using var aes = new AesGcm(masterKey, 16);
+        aes.Decrypt(nonce, encryptedDEK, tag, decryptedDEK);
+
+        return decryptedDEK;
+    }
     
     private void DoneClick(object? sender, RoutedEventArgs e)
     {
@@ -176,7 +256,7 @@ public partial class MainWindow : Window
         }
         else
         {
-            SetMasterPassword();
+            SetMasterPassword(Salt);
             var passList = new passList();
             passList.Show();
             this.Close();

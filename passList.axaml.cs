@@ -16,9 +16,14 @@ public class ServiceItem
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
-    public string Login { get; set; } = "";
-    public string Password { get; set; } = "";
+    public byte[]? Login { get; set; }
+    public byte[]? Password { get; set; }
     public string Description { get; set; } = "";
+    public byte[]? passNonce { get; set; }
+    public byte[]? passTag { get; set; }
+    public byte[]? loginNonce { get; set; }
+    public byte[]? loginTag { get; set; }
+
 }
 public partial class passList : Window
 {
@@ -61,7 +66,7 @@ public partial class passList : Window
         {
             using var command = connection.CreateCommand();
             command.CommandText =  """
-                SELECT Id, Name, Login, EncryptedPassword, Description
+                SELECT Id, Name, Login, EncryptedPassword, Description, PassNonce, PassTag, LoginNonce, LoginTag
                 FROM Services
                 """;
 
@@ -73,9 +78,13 @@ public partial class passList : Window
                 {
                     Id = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Login = reader.GetString(2),
-                    Password = reader.GetString(3),
-                    Description = reader.GetString(4)
+                    Login = reader.GetFieldValue<byte[]>(2),
+                    Password = reader.GetFieldValue<byte[]>(3),
+                    Description = reader.GetString(4),
+                    passNonce = reader.GetFieldValue<byte[]>(5),
+                    passTag = reader.GetFieldValue<byte[]>(6),
+                    loginNonce = reader.GetFieldValue<byte[]>(7),
+                    loginTag = reader.GetFieldValue<byte[]>(8)
                 });
             }
             return services;
@@ -110,20 +119,6 @@ public partial class passList : Window
         serviceDetailsWindow.Show();
         this.Close();
     }
-    // private void ServiceButtonClick(object? sender, RoutedEventArgs e)
-    // {
-    //     if (sender is Button button && ServiceButton.TryGetValue(button, out var serviceItem))
-    //     {
-    //          var serviceDetailsWindow = new ServiceDetailsWindow(serviceItem);
-    //         serviceDetailsWindow.Show();
-    //         this.Close();
-    //     }
-    //     // var serviceDetailsWindow = new ServiceDetailsWindow();
-    //     // serviceDetailsWindow.Show();
-    //     // this.Close();
-    // }
-
-
 
     // Коллекция, которая автоматически обновляет UI при добавлении элементов
     public ObservableCollection<ServiceItem> Services { get; set; } = new();
