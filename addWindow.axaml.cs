@@ -39,9 +39,9 @@ public partial class addWindow : Window
         this.Close();
     }
 
-    private (byte[] encPassByte, byte[] tag, byte[] nonce) encryptPass()
+    public static (byte[] encPassByte, byte[] tag, byte[] nonce) encryptPass(string _password)
     {
-        string password = inputPassword.Text ?? "";
+        string password = _password;
 
         byte[] dek = MainWindow.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
@@ -57,9 +57,9 @@ public partial class addWindow : Window
         return (encPassByte, tag, nonce);
     }
 
-    private (byte[] encPassByte, byte[] tag, byte[] nonce) encryptLogin()
+    public static (byte[] encPassByte, byte[] tag, byte[] nonce) encryptLogin(string _login)
     {
-        string login = inputLogin.Text ?? "";
+        string login = _login;
 
         byte[] dek = MainWindow.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
@@ -77,11 +77,14 @@ public partial class addWindow : Window
 
     private void AddData()
     {
+        string login = inputLogin.Text ?? "";
+        string password = inputPassword.Text ?? "";
+
         string serviceName = inputServiceName.Text ?? "";
         string description = inputDescription.Text ?? "";
 
-        var (encLoginByte, loginTag, loginNonce) = encryptLogin();
-        var (encPassByte, passTag, passNonce) = encryptPass();
+        var (encLoginByte, loginTag, loginNonce) = encryptLogin(login);
+        var (encPassByte, passTag, passNonce) = encryptPass(password);
 
         var connectionString = "Data Source=passwords.db";
         using var connection = new SqliteConnection(connectionString);

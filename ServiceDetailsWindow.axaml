@@ -6,6 +6,9 @@
         x:Class="PasswordManager.ServiceDetailsWindow"
         Title="ServiceDetailsWindow"
 
+        MinHeight="550"
+        MinWidth="550"
+
         TransparencyLevelHint="AcrylicBlur"
         Background="#3C000000"
         ExtendClientAreaToDecorationsHint="True"
@@ -41,9 +44,17 @@
 
 
                     <StackPanel Orientation="Horizontal">
-                      <Button Classes="Input" Content="Back" Click="BackClick" IsCancel="True"/>
-                      <Button Classes="Input" Content="Delete" Click="DeleteClick"/>
+                        <Button Classes="Input" Content="Back" Click="BackClick" IsCancel="True"/>
+                        <Button Classes="Input" Content="Save" Click="EditClick" IsDefault="True"/>
                     </StackPanel>
+                    <StackPanel IsVisible="True" x:Name="FDel">
+                        <Button Classes="Input Del" Content="Delete" Click="DeleteFormClick" Background="#AAD80000"/>
+                    </StackPanel>
+                    <StackPanel IsVisible="False" x:Name="SDel" Orientation="Horizontal">
+                        <Button Classes="Input" Content="Cancel" Click="CancelClick"/>
+                        <Button Classes="Input" Content="Delete" Click="DeleteClick" Background="#AAD80000"/>
+                    </StackPanel>
+                    
                 </StackPanel>
             </Grid>
         </DockPanel>

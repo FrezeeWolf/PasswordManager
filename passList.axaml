@@ -7,6 +7,9 @@
         x:Class="PasswordManager.passList"
         Title="passList"
 
+        MinHeight="550"
+        MinWidth="550"
+
         TransparencyLevelHint="AcrylicBlur"
         Background="#3C000000"
         ExtendClientAreaToDecorationsHint="True"
@@ -32,7 +35,7 @@
             <Grid RowDefinitions="35, *">
               <Grid Grid.Row="0" Classes="Header" ColumnDefinitions="Auto, *, Auto">
                 <Button Grid.Column="0" Content="Back" Classes="Back apps" Click="BackClick" IsCancel="True"/>
-                <Button Grid.Column="1" Content="Add" Classes="Add apps" Click="AddClick"/>
+                <Button Grid.Column="1" Content="Add" Classes="Add apps" Click="AddClick" IsDefault="True"/>
                 <Button Grid.Column="2" Content="Lock" Classes="Lock apps" Click="LockClick"/>
               </Grid>
 
@@ -53,7 +56,7 @@
                         <Grid ColumnDefinitions="Auto,*">
                           <!-- Вывод ID (цифры 1, 2, 3...) -->
                           <TextBlock Grid.Column="0" 
-                            Text="{Binding Id}"
+                            Text="{Binding TextId}"
                             FontWeight="Bold" 
                             Margin="0,0,20,0"/>
                                     

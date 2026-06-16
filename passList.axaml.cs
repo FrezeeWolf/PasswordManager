@@ -8,12 +8,14 @@ using System.Collections.ObjectModel;
 using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using System.Text;
+using System.Data.Common;
 
 
 namespace PasswordManager;
 
 public class ServiceItem
 {
+    public int TextId { get; set; }
     public int Id { get; set; }
     public string Name { get; set; } = "";
     public byte[]? Login { get; set; }
@@ -129,8 +131,11 @@ public partial class passList : Window
         DataContext = this;
 
         var serviceData = GetServiceData();
+        int _textId = 1;
         foreach (var service in serviceData)
         {
+            service.TextId = _textId;
+            _textId++;
             Services.Add(service);
         }
 

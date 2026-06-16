@@ -6,6 +6,9 @@
         x:Class="PasswordManager.addWindow"
         Title="addWindow"
 
+        MinHeight="550"
+        MinWidth="550"
+
         TransparencyLevelHint="AcrylicBlur"
         Background="#3C000000"
         ExtendClientAreaToDecorationsHint="True"
