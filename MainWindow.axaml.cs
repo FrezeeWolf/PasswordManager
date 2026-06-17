@@ -21,6 +21,14 @@ public partial class MainWindow : Window
     public static class Session
     {
         public static byte[]? DEK {get; set;}
+        public static void Clear()
+        {
+            if (DEK != null)
+            {
+                Array.Clear(DEK, 0, DEK.Length);
+                DEK = null;
+            }
+        }
     }
 
     //Шапка приложения
