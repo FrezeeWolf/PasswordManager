@@ -40,6 +40,12 @@ public partial class MainWindow : Window
         }
     }
 
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        inputMasterKey.Focus();
+    }
+
     private void CheckBoxChanged(object? sender, RoutedEventArgs e)
     {
         var checkBox = (CheckBox)sender!;
