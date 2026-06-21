@@ -38,6 +38,11 @@ public partial class addWindow : Window
         passList.Show();
         this.Close();
     }
+    private void CheckBoxChanged(object? sender, RoutedEventArgs e)
+    {
+        var checkBox = (CheckBox)sender!;
+        inputPassword.PasswordChar = checkBox.IsChecked == true ? '\0' : '*';
+    }
 
     public static (byte[] encPassByte, byte[] tag, byte[] nonce) encryptPass(string _password)
     {

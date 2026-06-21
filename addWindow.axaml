@@ -38,7 +38,8 @@
                     <Label Classes="Input" Content="Введите логин"/>
                     <TextBox Classes="Input" x:Name="inputLogin"/>
                     <Label Classes="Input" Content="Введите пароль"/>
-                    <TextBox Classes="Input" x:Name="inputPassword"/>
+                    <TextBox Classes="Input" x:Name="inputPassword" PasswordChar="*"/>
+                    <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>
                     <Label Classes="Input" Content="Введите дополнительную информацию"/>
                     <TextBox Classes="Input" x:Name="inputDescription"/>
                     <StackPanel Orientation="Horizontal">

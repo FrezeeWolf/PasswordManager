@@ -38,7 +38,8 @@
                     <Label Classes="Input" Content="Логин"/>
                     <TextBox Classes="Input" x:Name="Login"/>
                     <Label Classes="Input" Content="Пароль"/>
-                    <TextBox Classes="Input" x:Name="Password"/>
+                    <TextBox Classes="Input" x:Name="Password" PasswordChar="*"/>
+                    <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>
                     <Label Classes="Input" Content="Доп информация"/>
                     <TextBox Classes="Input" x:Name="Description"/>
 

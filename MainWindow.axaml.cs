@@ -40,6 +40,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private void CheckBoxChanged(object? sender, RoutedEventArgs e)
+    {
+        var checkBox = (CheckBox)sender!;
+        inputMasterKey.PasswordChar = checkBox.IsChecked == true ? '\0' : '*';
+    }
     string Salt = Guid.NewGuid().ToString();
 
     private static bool IsMasterPasswordSet()

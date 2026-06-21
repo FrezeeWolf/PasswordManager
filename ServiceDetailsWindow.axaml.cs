@@ -49,6 +49,11 @@ public partial class ServiceDetailsWindow : Window
         this.Close();
     }
 
+    private void CheckBoxChanged(object? sender, RoutedEventArgs e)
+    {
+        var checkBox = (CheckBox)sender!;
+        Password.PasswordChar = checkBox.IsChecked == true ? '\0' : '*';
+    }
     private void DeliteId()
     {
         try
