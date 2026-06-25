@@ -23,8 +23,10 @@ The application allows you to securely store credentials for different services 
 * AES-GCM
 
 ## Screenshots
-
-> Add screenshots here.
+<img width="1440" height="757" alt="image" src="https://github.com/user-attachments/assets/f9428eb1-5e2d-4aa9-9024-9f99e3026b29" />
+<img width="1440" height="755" alt="image" src="https://github.com/user-attachments/assets/db5563c0-0906-473b-b5c1-d2c7c7f405f1" />
+<img width="1440" height="756" alt="image" src="https://github.com/user-attachments/assets/601b4c3d-5a38-4ea5-b8c3-8c0ab7c89661" />
+<img width="1440" height="757" alt="image" src="https://github.com/user-attachments/assets/89c5cbe9-e85b-4f8b-8d86-2571e584921b" />
 
 ## Build
 
