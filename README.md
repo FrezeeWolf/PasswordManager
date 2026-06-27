@@ -31,7 +31,7 @@ The application allows you to securely store credentials for different services 
 ## Build
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/FrezeeWolf/PasswordManager.git
 cd PasswordManager
 dotnet restore
 dotnet run
