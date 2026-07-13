@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PasswordManager.AddInfoView">
+            
+            <UserControl.Styles>
+              <StyleInclude Source="avares://PasswordManager/Styles/addWindowStyles.axaml"/>
+            </UserControl.Styles>
+            
+             <Grid>
+                 <StackPanel Classes="Wrapper">
+                    <Label Classes="Input" Content="Введите название сервиса"/>
+                    <TextBox Classes="Input" x:Name="inputServiceName"/>
+                    <Label Classes="Input" Content="Введите логин"/>
+                    <TextBox Classes="Input" x:Name="inputLogin"/>
+                    <Label Classes="Input" Content="Введите пароль"/>
+                    <TextBox Classes="Input" x:Name="inputPassword" PasswordChar="*"/>
+                    <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>
+                    <Label Classes="Input" Content="Введите дополнительную информацию"/>
+                    <TextBox Classes="Input" x:Name="inputDescription"/>
+                    <StackPanel Orientation="Horizontal">
+                      <Button Classes="Input" Content="Back" Click="BackClick" IsCancel="True"/>
+                      <Button Classes="Input" Content="Done" Click="DoneClick" IsDefault="True"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+</UserControl>

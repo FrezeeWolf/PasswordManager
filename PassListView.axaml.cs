@@ -2,14 +2,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using System.Collections.ObjectModel;
 using Microsoft.Data.Sqlite;
-using System.Security.Cryptography;
-using System.Text;
-using System.Data.Common;
-
 
 namespace PasswordManager;
 
@@ -27,35 +22,24 @@ public class ServiceItem
     public byte[]? loginTag { get; set; }
 
 }
-public partial class passList : Window
-{
-    //Шапка приложения
-    private void HeaderPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            this.BeginMoveDrag(e);
-        }
-    }
 
-    //Кнопачкииии
+public partial class PassListView : UserControl
+{
+
     private void BackClick(object? sender, RoutedEventArgs e)
     {
-        var MainWindow = new MainWindow();
-        MainWindow.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+            window?.Navigate(new LoginView());
     }
     private void LockClick(object? sender, RoutedEventArgs e)
     {
-        var MainWindow = new MainWindow();
-        MainWindow.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new LoginView());
     }
     private void AddClick(object? sender, RoutedEventArgs e)
     {
-        var addWindow = new addWindow();
-        addWindow.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new AddInfoView());
     }
 
     private List<ServiceItem> GetServiceData()
@@ -117,15 +101,14 @@ public partial class passList : Window
             return;
         }
 
-        var serviceDetailsWindow = new ServiceDetailsWindow(selected);
-        serviceDetailsWindow.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new ServiceDetailsView(selected));
     }
 
     // Коллекция, которая автоматически обновляет UI при добавлении элементов
     public ObservableCollection<ServiceItem> Services { get; set; } = new();
 
-    public passList()
+    public PassListView()
     {
         InitializeComponent();
         DataContext = this;
@@ -145,4 +128,3 @@ public partial class passList : Window
         }
     }
 }
-

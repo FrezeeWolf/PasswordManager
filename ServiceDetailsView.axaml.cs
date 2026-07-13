@@ -4,49 +4,37 @@ using Microsoft.Data.Sqlite;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Text;
-using Avalonia.Controls.Primitives;
-using HarfBuzzSharp;
 
 namespace PasswordManager;
 
-public partial class ServiceDetailsWindow : Window
+public partial class ServiceDetailsView : UserControl
 {
     private ServiceItem? _selected;
-    public ServiceDetailsWindow()
+    public ServiceDetailsView()
     {
         InitializeComponent();
-        
     }
-    public ServiceDetailsWindow(ServiceItem? Selected)
+
+    public ServiceDetailsView(ServiceItem? Selected)
     {
         InitializeComponent();
         printData(Selected);
         _selected = Selected; 
     }
 
-    private void HeaderPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            this.BeginMoveDrag(e);
-        }
-    }
     private void BackClick(object? sender, RoutedEventArgs e)
     {
-        var passList = new passList();
-        passList.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new PassListView());
     }
 
     private void DeleteClick(object? sender, RoutedEventArgs e)
     {
         DeliteId();
-        var passList = new passList();
-        passList.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new PassListView());
     }
 
     private void CheckBoxChanged(object? sender, RoutedEventArgs e)
@@ -105,9 +93,8 @@ public partial class ServiceDetailsWindow : Window
 
         UpdateData(serviceName, login, password, description, id);
 
-        var passList = new passList();
-        passList.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new PassListView());
     }
 
     private void UpdateData(string _serviceName, string _login, string _password, string _description, int _id)
@@ -118,8 +105,8 @@ public partial class ServiceDetailsWindow : Window
         string description = _description;
         int Id = _id;
 
-        var (encLoginByte, loginTag, loginNonce) = addWindow.encryptLogin(login);
-        var (encPassByte, passTag, passNonce) = addWindow.encryptPass(password);
+        var (encLoginByte, loginTag, loginNonce) = AddInfoView.encryptLogin(login);
+        var (encPassByte, passTag, passNonce) = AddInfoView.encryptPass(password);
 
         var connectionString = "Data Source=passwords.db";
         using var connection = new SqliteConnection(connectionString);
@@ -162,7 +149,7 @@ public partial class ServiceDetailsWindow : Window
     {
         try
         {
-            byte[] dek = MainWindow.Session.DEK!;
+            byte[] dek = LoginView.Session.DEK!;
             byte[] nonce = selected!.passNonce!;
             byte[] tag = selected.passTag!;
             byte[] encPassByte = selected.Password!;
@@ -187,7 +174,7 @@ public partial class ServiceDetailsWindow : Window
     {
         try
         {
-            byte[] dek = MainWindow.Session.DEK!;
+            byte[] dek = LoginView.Session.DEK!;
             byte[] nonce = selected!.loginNonce!;
             byte[] tag = selected.loginTag!;
             byte[] encLoginByte = selected.Login!;

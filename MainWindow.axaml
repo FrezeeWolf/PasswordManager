@@ -10,7 +10,7 @@
         MinWidth="550"
 
         TransparencyLevelHint="AcrylicBlur"
-        Background="#3C000000"
+        Background="#78000000"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1">
 
@@ -31,13 +31,7 @@
                         />
             </Border>
             <!--Основной код-->
-            <Grid>
-                 <StackPanel Classes="Wrapper">
-                    <Label Classes="Input"  x:Name="labelMasterKey"/>
-                    <TextBox Classes="Input" x:Name="inputMasterKey" PasswordChar="*"/>
-                    <Button Classes="Input" Content="Done" Click="DoneClick" IsDefault="True"/>
-                    <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>
-                </StackPanel>
-            </Grid>
+            <ContentControl
+                x:Name="MainContent"/>
         </DockPanel>
 </Window>

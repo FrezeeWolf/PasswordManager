@@ -9,34 +9,24 @@ using Microsoft.Data.Sqlite;
 
 namespace PasswordManager;
 
-public partial class addWindow : Window
+public partial class AddInfoView : UserControl
 {
-    public addWindow()
+    public AddInfoView()
     {
         InitializeComponent();
     }
 
-    private void HeaderPointerPressed(object? sender, PointerPressedEventArgs e)
+     private void BackClick(object? sender, RoutedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            this.BeginMoveDrag(e);
-        }
-    }
-
-    private void BackClick(object? sender, RoutedEventArgs e)
-    {
-        var passList = new passList();
-        passList.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new PassListView());
     }
 
     private void DoneClick(object? sender, RoutedEventArgs e)
     {
         AddData();
-        var passList = new passList();
-        passList.Show();
-        this.Close();
+        var window = TopLevel.GetTopLevel(this) as MainWindow;
+        window?.Navigate(new PassListView());
     }
     private void CheckBoxChanged(object? sender, RoutedEventArgs e)
     {
@@ -48,7 +38,7 @@ public partial class addWindow : Window
     {
         string password = _password;
 
-        byte[] dek = MainWindow.Session.DEK!;
+        byte[] dek = LoginView.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
         byte[] tag = new byte[16];
 
@@ -66,7 +56,7 @@ public partial class addWindow : Window
     {
         string login = _login;
 
-        byte[] dek = MainWindow.Session.DEK!;
+        byte[] dek = LoginView.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
         byte[] tag = new byte[16];
 
