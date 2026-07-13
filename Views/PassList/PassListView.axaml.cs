@@ -5,23 +5,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Collections.ObjectModel;
 using Microsoft.Data.Sqlite;
+using PasswordManager.Models;
 
-namespace PasswordManager;
-
-public class ServiceItem
-{
-    public int TextId { get; set; }
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public byte[]? Login { get; set; }
-    public byte[]? Password { get; set; }
-    public string Description { get; set; } = "";
-    public byte[]? passNonce { get; set; }
-    public byte[]? passTag { get; set; }
-    public byte[]? loginNonce { get; set; }
-    public byte[]? loginTag { get; set; }
-
-}
+namespace PasswordManager.Views.PassList;
 
 public partial class PassListView : UserControl
 {
@@ -29,17 +15,17 @@ public partial class PassListView : UserControl
     private void BackClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-            window?.Navigate(new LoginView());
+            window?.Navigate(new Views.Login.LoginView());
     }
     private void LockClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new LoginView());
+        window?.Navigate(new Views.Login.LoginView());
     }
     private void AddClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new AddInfoView());
+        window?.Navigate(new Views.Add. AddInfoView());
     }
 
     private List<ServiceItem> GetServiceData()
@@ -102,7 +88,7 @@ public partial class PassListView : UserControl
         }
 
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new ServiceDetailsView(selected));
+        window?.Navigate(new Views.ServiceDetails.ServiceDetailsView(selected));
     }
 
     // Коллекция, которая автоматически обновляет UI при добавлении элементов

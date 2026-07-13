@@ -2,12 +2,12 @@ using System;
 using System.IO;
 using Microsoft.Data.Sqlite;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using System.Security.Cryptography;
 using System.Text;
+using PasswordManager.Models;
 
-namespace PasswordManager;
+namespace PasswordManager.Views.ServiceDetails;
 
 public partial class ServiceDetailsView : UserControl
 {
@@ -27,14 +27,14 @@ public partial class ServiceDetailsView : UserControl
     private void BackClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new PassListView());
+        window?.Navigate(new Views.PassList.PassListView());
     }
 
     private void DeleteClick(object? sender, RoutedEventArgs e)
     {
         DeliteId();
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new PassListView());
+        window?.Navigate(new Views.PassList.PassListView());
     }
 
     private void CheckBoxChanged(object? sender, RoutedEventArgs e)
@@ -94,7 +94,7 @@ public partial class ServiceDetailsView : UserControl
         UpdateData(serviceName, login, password, description, id);
 
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new PassListView());
+        window?.Navigate(new Views.PassList.PassListView());
     }
 
     private void UpdateData(string _serviceName, string _login, string _password, string _description, int _id)
@@ -105,8 +105,8 @@ public partial class ServiceDetailsView : UserControl
         string description = _description;
         int Id = _id;
 
-        var (encLoginByte, loginTag, loginNonce) = AddInfoView.encryptLogin(login);
-        var (encPassByte, passTag, passNonce) = AddInfoView.encryptPass(password);
+        var (encLoginByte, loginTag, loginNonce) = Views.Add.AddInfoView.encryptLogin(login);
+        var (encPassByte, passTag, passNonce) = Views.Add.AddInfoView.encryptPass(password);
 
         var connectionString = "Data Source=passwords.db";
         using var connection = new SqliteConnection(connectionString);
@@ -149,7 +149,7 @@ public partial class ServiceDetailsView : UserControl
     {
         try
         {
-            byte[] dek = LoginView.Session.DEK!;
+            byte[] dek = Views.Login.LoginView.Session.DEK!;
             byte[] nonce = selected!.passNonce!;
             byte[] tag = selected.passTag!;
             byte[] encPassByte = selected.Password!;
@@ -174,7 +174,7 @@ public partial class ServiceDetailsView : UserControl
     {
         try
         {
-            byte[] dek = LoginView.Session.DEK!;
+            byte[] dek = Views.Login.LoginView.Session.DEK!;
             byte[] nonce = selected!.loginNonce!;
             byte[] tag = selected.loginTag!;
             byte[] encLoginByte = selected.Login!;

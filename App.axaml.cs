@@ -19,7 +19,7 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow();
             desktop.Exit += (_, _) =>
             {
-                LoginView.Session.Clear();
+                Views.Login.LoginView.Session.Clear();
             };
         }
 

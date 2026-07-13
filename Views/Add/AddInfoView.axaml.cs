@@ -7,7 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Data.Sqlite;
 
-namespace PasswordManager;
+namespace PasswordManager.Views.Add;
 
 public partial class AddInfoView : UserControl
 {
@@ -19,14 +19,14 @@ public partial class AddInfoView : UserControl
      private void BackClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new PassListView());
+        window?.Navigate(new Views.PassList.PassListView());
     }
 
     private void DoneClick(object? sender, RoutedEventArgs e)
     {
         AddData();
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new PassListView());
+        window?.Navigate(new Views.PassList.PassListView());
     }
     private void CheckBoxChanged(object? sender, RoutedEventArgs e)
     {
@@ -38,7 +38,7 @@ public partial class AddInfoView : UserControl
     {
         string password = _password;
 
-        byte[] dek = LoginView.Session.DEK!;
+        byte[] dek = Views.Login.LoginView.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
         byte[] tag = new byte[16];
 
@@ -56,7 +56,7 @@ public partial class AddInfoView : UserControl
     {
         string login = _login;
 
-        byte[] dek = LoginView.Session.DEK!;
+        byte[] dek = Views.Login.LoginView.Session.DEK!;
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
         byte[] tag = new byte[16];
 

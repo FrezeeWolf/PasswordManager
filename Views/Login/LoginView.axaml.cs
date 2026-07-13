@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 
-namespace PasswordManager;
+namespace PasswordManager.Views.Login;
 
 public partial class LoginView : UserControl
 {
@@ -134,7 +134,7 @@ public partial class LoginView : UserControl
             Session.DEK = dek; 
 
             var window = TopLevel.GetTopLevel(this) as MainWindow;
-            window?.Navigate(new PassListView());
+            window?.Navigate(new Views.PassList.PassListView());
         }
         else
         {
@@ -269,7 +269,7 @@ public partial class LoginView : UserControl
             SetMasterPassword(Salt);
             
             var window = TopLevel.GetTopLevel(this) as MainWindow;
-            window?.Navigate(new PassListView());
+            window?.Navigate(new Views.PassList.PassListView());
         }
     }
 }
