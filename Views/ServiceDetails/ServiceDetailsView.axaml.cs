@@ -91,8 +91,15 @@ public partial class ServiceDetailsView : UserControl
         string description = Description.Text ?? "";
         int id = _selected!.Id;
 
-        UpdateData(serviceName, login, password, description, id);
-
+        if (serviceName == "" && login == "" && password == "" && description == "")
+        {
+            DeliteId();
+        }
+        else
+        {
+            UpdateData(serviceName, login, password, description, id);
+        }
+        
         var window = TopLevel.GetTopLevel(this) as MainWindow;
         window?.Navigate(new Views.PassList.PassListView());
     }
@@ -113,7 +120,7 @@ public partial class ServiceDetailsView : UserControl
         connection.Open();
         try
         {
-             using var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText = """
                 UPDATE Services
                 SET
