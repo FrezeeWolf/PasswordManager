@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Data.Sqlite;
 
@@ -81,29 +80,37 @@ public partial class AddInfoView : UserControl
         var (encLoginByte, loginTag, loginNonce) = encryptLogin(login);
         var (encPassByte, passTag, passNonce) = encryptPass(password);
 
-        var connectionString = "Data Source=passwords.db";
-        using var connection = new SqliteConnection(connectionString);
-        connection.Open();
-        try
+        if (login == "" && password == "" && serviceName == "" && description == "")
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                INSERT INTO Services (Name, Login, EncryptedPassword, Description, PassNonce, PassTag, LoginNonce, LoginTag)
-                VALUES ($name, $login, $password, $description, $passnonce, $passtag, $loginnonce, $logintag);
-                """;
-            command.Parameters.AddWithValue("$name", serviceName);
-            command.Parameters.AddWithValue("$login", encLoginByte);
-            command.Parameters.AddWithValue("$password", encPassByte);
-            command.Parameters.AddWithValue("$description", description);
-            command.Parameters.AddWithValue("$passnonce", passNonce);
-            command.Parameters.AddWithValue("$passtag", passTag);
-            command.Parameters.AddWithValue("$loginnonce", loginNonce);
-            command.Parameters.AddWithValue("$logintag", loginTag);
-            command.ExecuteNonQuery();
+            return;
         }
-        catch (Exception ex)
+        else
         {
-            File.WriteAllText("error.txt", ex.ToString());
+            var connectionString = "Data Source=passwords.db";
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+            try
+            {
+                using var command = connection.CreateCommand();
+                command.CommandText = """
+                    INSERT INTO Services (Name, Login, EncryptedPassword, Description, PassNonce, PassTag, LoginNonce, LoginTag)
+                    VALUES ($name, $login, $password, $description, $passnonce, $passtag, $loginnonce, $logintag);
+                    """;
+                command.Parameters.AddWithValue("$name", serviceName);
+                command.Parameters.AddWithValue("$login", encLoginByte);
+                command.Parameters.AddWithValue("$password", encPassByte);
+                command.Parameters.AddWithValue("$description", description);
+                command.Parameters.AddWithValue("$passnonce", passNonce);
+                command.Parameters.AddWithValue("$passtag", passTag);
+                command.Parameters.AddWithValue("$loginnonce", loginNonce);
+                command.Parameters.AddWithValue("$logintag", loginTag);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("error.txt", ex.ToString());
+            }
         }
+        
     }
 }

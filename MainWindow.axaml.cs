@@ -1,12 +1,5 @@
-using System;
-using System.IO;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Microsoft.Data.Sqlite;
-using System.Security.Cryptography;
-using System.Text;
-
 
 namespace PasswordManager;
 
