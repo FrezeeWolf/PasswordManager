@@ -9,7 +9,7 @@
       <Label Classes="Input"  x:Name="labelMasterKey"/>
       <TextBox Classes="Input" x:Name="inputMasterKey" PasswordChar="*"/>
       <Button Classes="Input" Content="Done" Click="DoneClick" IsDefault="True"/>
-      <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>           
+      <CheckBox Content="Show password" IsCheckedChanged="CheckBoxChanged"/>           
     </StackPanel>
   </Grid>           
 </UserControl>

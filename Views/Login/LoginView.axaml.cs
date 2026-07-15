@@ -152,7 +152,7 @@ public partial class LoginView : UserControl
         else
         {
             inputMasterKey.Text = "";
-            inputMasterKey.Watermark = "Неверный пароль!";
+            inputMasterKey.Watermark = "Incorrect password!";
         }
     }
 
@@ -224,11 +224,11 @@ public partial class LoginView : UserControl
     {
         if (IsMasterPasswordSet())
         {
-            labelMasterKey.Content = "Введите мастер-пароль";
+            labelMasterKey.Content = "Enter the master password";
         }
         else
         {
-            labelMasterKey.Content = "Установите мастер-пароль";
+            labelMasterKey.Content = "Set a master password.";
         }
     }
 
@@ -280,7 +280,7 @@ public partial class LoginView : UserControl
         }
         else
         {
-            if (inputMasterKey.Text == "")
+            if (string.IsNullOrWhiteSpace(inputMasterKey.Text))
             {
                 labelMasterKey.Content = "Password cannot be empty!";
                 inputMasterKey.Text = "";

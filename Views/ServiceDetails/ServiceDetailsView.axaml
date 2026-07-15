@@ -11,14 +11,14 @@
 
              <Grid>
                  <StackPanel Classes="Wrapper">
-                    <Label Classes="Input" Content="Название сервиса"/>
+                    <Label Classes="Input" Content="Service name"/>
                     <TextBox Classes="Input" x:Name="ServiceName"/>
-                    <Label Classes="Input" Content="Логин"/>
+                    <Label Classes="Input" Content="Login"/>
                     <TextBox Classes="Input" x:Name="Login"/>
-                    <Label Classes="Input" Content="Пароль"/>
+                    <Label Classes="Input" Content="Password"/>
                     <TextBox Classes="Input" x:Name="Password" PasswordChar="*"/>
-                    <CheckBox Content="Показать пароль" IsCheckedChanged="CheckBoxChanged"/>
-                    <Label Classes="Input" Content="Доп информация"/>
+                    <CheckBox Content="Show password" IsCheckedChanged="CheckBoxChanged"/>
+                    <Label Classes="Input" Content="Description"/>
                     <TextBox Classes="Input" x:Name="Description"/>
 
 
