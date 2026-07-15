@@ -48,8 +48,7 @@ public partial class ServiceDetailsView : UserControl
         {
             int id = _selected!.Id;
 
-            using var connection =
-            new SqliteConnection("Data Source=passwords.db");
+            using var connection = new SqliteConnection("Data Source=passwords.db");
             connection.Open();
 
             using var command = connection.CreateCommand();

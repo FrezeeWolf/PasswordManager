@@ -91,61 +91,124 @@ public partial class SettingsView : UserControl
     }
     private void SaveNewMasterPasswordClick(object? sender, RoutedEventArgs e)
     {
-        ChangeMasterPassword();
-        NewMasterPasswordPanel.IsVisible = false;
-        FirstButtonsPanel.IsVisible = true;
-        confirmLabel.Content = "Master password changed successfully!";
+        if (string.IsNullOrEmpty(NewMasterPassword.Text))
+        {
+            confirmLabel.Content = "Master Password cannot be empty!";
+            return;
+        }
+        else
+        {
+            ChangeMasterPassword();
+        } 
     }
 
     private void SaveEmergencyPasswordClick(object? sender, RoutedEventArgs e)
     {
-        // Implement the logic to save the new emergency password
-        // For example, you might want to hash the password and store it securely
-        // string newMasterPassword = NewMasterPassword.Text;
-        // Save the new master password securely
-        NewEmergencyPasswordPanel.IsVisible = false;
-        FirstButtonsPanel.IsVisible = true;
-        confirmLabel.Content = "Emergency password changed successfully!";
+        if (string.IsNullOrEmpty(NewEmergencyPassword.Text))
+        {
+            confirmLabel.Content = "Emergency Password cannot be empty!";
+            return;
+        }
+        else
+        {
+            ChangeEmergencyPassword();
+        } 
+            
     }
 
     private void ChangeMasterPassword()
     {
-        string newSalt = Guid.NewGuid().ToString();
-        string oldSalt = Views.Login.LoginView.Session.Salt!;
+        (string storedEmergencyPasswordHash, string storedMasterPasswordHash, string storedSalt) = Views.Login.LoginView.GetMasterPasswordData();
         string newEnteredPass = NewMasterPassword.Text ?? "";
-        string newHash = Views.Login.LoginView.ComputeHash(newEnteredPass, newSalt);
-        byte[] newMasterKey = Views.Login.LoginView.DeriveKey(newEnteredPass, newSalt);
+        string newHash = Views.Login.LoginView.ComputeHash(newEnteredPass, storedSalt);
+        byte[] newMasterKey = Views.Login.LoginView.DeriveKey(newEnteredPass, storedSalt);
         var (reEncryptedDEK,newNonce, newTag) = ReEncryptDEK(newMasterKey);
-        
-        var connectionString = "Data Source=passwords.db";
-        try
+        if (newHash == storedMasterPasswordHash)
         {
-            using var connection = new SqliteConnection(connectionString);
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText =
-            """
-            UPDATE MasterPassword
-            SET PasswordHash = $hash, Salt = $salt, EncryptedDEK = $dek, Nonce = $nonce, Tag = $tag
-            WHERE Salt = $oldSalt;
-            """;
-            command.Parameters.AddWithValue("$hash", newHash);
-            command.Parameters.AddWithValue("$salt", newSalt);
-            command.Parameters.AddWithValue("$dek", reEncryptedDEK);
-            command.Parameters.AddWithValue("$nonce", newNonce);
-            command.Parameters.AddWithValue("$tag", newTag);
-            command.Parameters.AddWithValue("$oldSalt", oldSalt);
-            command.ExecuteNonQuery();
-
-            //декрипт для дальнейшего использования
-            byte[] dek = Views.Login.LoginView.Decrypt(reEncryptedDEK, newNonce, newTag, newMasterKey);
-            Views.Login.LoginView.Session.Salt = newSalt;
+            confirmLabel.Content = "New MP cannot be the same as the current one!";
+            return;
         }
-        catch (Exception ex)
+        else if (newHash == storedEmergencyPasswordHash)
         {
-            File.WriteAllText("error.txt", ex.ToString());
+            confirmLabel.Content = "MP cannot be the same as the EP!";
+            return;
+        }
+        else
+        {
+            var connectionString = "Data Source=passwords.db";
+            try
+            {
+                using var connection = new SqliteConnection(connectionString);
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText =
+                """
+                UPDATE MasterPassword
+                SET EmergencyPasswordHash = $emergecyhash, PasswordHash = $hash, Salt = $salt, EncryptedDEK = $dek, Nonce = $nonce, Tag = $tag
+                WHERE Salt = $oldSalt;
+                """;
+                command.Parameters.AddWithValue("$emergecyhash", storedEmergencyPasswordHash);
+                command.Parameters.AddWithValue("$hash", newHash);
+                command.Parameters.AddWithValue("$salt", storedSalt);
+                command.Parameters.AddWithValue("$dek", reEncryptedDEK);
+                command.Parameters.AddWithValue("$nonce", newNonce);
+                command.Parameters.AddWithValue("$tag", newTag);
+                command.Parameters.AddWithValue("$oldSalt", storedSalt);
+                command.ExecuteNonQuery();
+
+                NewMasterPasswordPanel.IsVisible = false;
+                FirstButtonsPanel.IsVisible = true;
+                confirmLabel.Content = "Master password changed successfully!";
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("error.txt", ex.ToString());
+            }
         }
     }
+
+    private void ChangeEmergencyPassword()
+    {
+        string newEnteredPass = NewEmergencyPassword.Text ?? "";
+        (string storedEmergencyPasswordHash, string storedMasterPasswordHash, string storedSalt) = Views.Login.LoginView.GetMasterPasswordData();
+        string newEmergencyPasswordHash = Views.Login.LoginView.ComputeHash(newEnteredPass, storedSalt);
+        if (newEmergencyPasswordHash == storedMasterPasswordHash)
+        {
+            confirmLabel.Content = "EP cannot be the same as the MP!";
+            return;
+        }
+        else if (newEmergencyPasswordHash == storedEmergencyPasswordHash)
+        {
+            confirmLabel.Content = "New EP cannot be the same as the current one!";
+            return;
+        }
+        else
+        {
+            var connectionString = "Data Source=passwords.db";
+            try
+            {
+                using var connection = new SqliteConnection(connectionString);
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText =
+                """
+                UPDATE MasterPassword
+                SET EmergencyPasswordHash = $hash
+                WHERE Salt = $salt;
+                """;
+                command.Parameters.AddWithValue("$hash", newEmergencyPasswordHash);
+                command.Parameters.AddWithValue("$salt", storedSalt);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("error.txt", ex.ToString());
+            }
+        }
+            NewEmergencyPasswordPanel.IsVisible = false;
+            FirstButtonsPanel.IsVisible = true;
+            confirmLabel.Content = "Emergency password changed successfully!";
+    } 
 
     private (byte[] encdek, byte[] nonce, byte[] tag) ReEncryptDEK(byte[] _newMaterKey)
     {

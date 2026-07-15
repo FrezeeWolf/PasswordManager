@@ -26,7 +26,6 @@ public partial class LoginView : UserControl
     
     public static class Session
     {
-        public static string? Salt {get; set;}
         public static byte[]? DEK {get; set;}
         public static void Clear()
         {
@@ -76,7 +75,7 @@ public partial class LoginView : UserControl
         }
     }
 
-    private static (string Hash, string Salt) GetMasterPasswordData()
+    public static (string EmergencyPasswordHash, string PasswordHash, string Salt) GetMasterPasswordData()
     {
         var connectionString = "Data Source=passwords.db";
 
@@ -87,7 +86,7 @@ public partial class LoginView : UserControl
             using var command = connection.CreateCommand();
             command.CommandText =
             """
-            SELECT PasswordHash, Salt
+            SELECT EmergencyPasswordHash, PasswordHash, Salt
             FROM MasterPassword
             """;
             using var reader = command.ExecuteReader();
@@ -95,7 +94,8 @@ public partial class LoginView : UserControl
             {
                 return (
                     reader.GetString(0),
-                    reader.GetString(1)
+                    reader.GetString(1),
+                    reader.GetString(2)
                 );
             }
             else
@@ -106,7 +106,7 @@ public partial class LoginView : UserControl
         catch (Exception ex)
         {
             File.WriteAllText("error.txt", ex.ToString());
-            return ("", "");
+            return ("", "", "");
         }
     }
 
@@ -123,7 +123,7 @@ public partial class LoginView : UserControl
     private void ValidateMasterPassword()
     {
         string enteredPass = inputMasterKey.Text ?? "";
-        var (storedHash, storedSalt) = GetMasterPasswordData();
+        var (storedEmergencyHash,storedHash, storedSalt) = GetMasterPasswordData();
         var hashOfEntered = ComputeHash(enteredPass, storedSalt);
         byte[] masterKey = DeriveKey(enteredPass, storedSalt);
         var (encryptedDEK, nonce, tag) = DEKInfo();
@@ -131,11 +131,23 @@ public partial class LoginView : UserControl
         {
             //декрипт для дальнейшего использования
             byte[] dek = Decrypt(encryptedDEK, nonce, tag, masterKey);
-            Session.DEK = dek; 
-            Session.Salt = storedSalt;
+            Session.DEK = dek;
 
             var window = TopLevel.GetTopLevel(this) as MainWindow;
             window?.Navigate(new Views.PassList.PassListView());
+        }
+        else if (hashOfEntered == storedEmergencyHash)
+        {
+            try
+            {
+                inputMasterKey.Text = "";
+                inputMasterKey.Watermark = "Emergency password entered!";
+                MainWindow.ClearDatabase();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("error.txt", ex.ToString());
+            }
         }
         else
         {
@@ -176,10 +188,10 @@ public partial class LoginView : UserControl
     {
         string enteredPass = inputMasterKey.Text ?? "";
         string salt = Salt;
+        string fhash = "0000";
         string hash = ComputeHash(enteredPass, salt);
         byte[] masterKey = DeriveKey(enteredPass, salt);
         var (encryptedDEK, nonce, tag) = EncryptDEK(masterKey);
-
         var connectionString = "Data Source=passwords.db";
         try
         {
@@ -188,9 +200,10 @@ public partial class LoginView : UserControl
             using var command = connection.CreateCommand();
             command.CommandText =
             """
-            INSERT INTO MasterPassword (PasswordHash, Salt, EncryptedDEK, Nonce, Tag)
-            VALUES ($hash, $salt, $dek, $nonce, $tag);
+            INSERT INTO MasterPassword (EmergencyPasswordHash, PasswordHash, Salt, EncryptedDEK, Nonce, Tag)
+            VALUES ($emergencyhash, $hash, $salt, $dek, $nonce, $tag);
             """;
+            command.Parameters.AddWithValue("$emergencyhash", fhash);
             command.Parameters.AddWithValue("$hash", hash);
             command.Parameters.AddWithValue("$salt", salt);
             command.Parameters.AddWithValue("$dek", encryptedDEK);
@@ -267,10 +280,18 @@ public partial class LoginView : UserControl
         }
         else
         {
-            SetMasterPassword(Salt);
+            if (inputMasterKey.Text == "")
+            {
+                labelMasterKey.Content = "Password cannot be empty!";
+                inputMasterKey.Text = "";
+            }
+            else
+            {
+                SetMasterPassword(Salt);
             
-            var window = TopLevel.GetTopLevel(this) as MainWindow;
-            window?.Navigate(new Views.PassList.PassListView());
+                var window = TopLevel.GetTopLevel(this) as MainWindow;
+                window?.Navigate(new Views.PassList.PassListView());
+            }
         }
     }
 }

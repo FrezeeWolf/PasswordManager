@@ -22,6 +22,7 @@ class Database
                 command.CommandText = """
                     CREATE TABLE IF NOT EXISTS MasterPassword
                     (
+                        EmergencyPasswordHash TEXT NOT NULL,
                         PasswordHash TEXT NOT NULL,
                         Salt TEXT NOT NULL,
                         EncryptedDEK BLOB NOT NULL,
