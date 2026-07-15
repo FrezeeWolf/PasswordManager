@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PasswordManager.Views.Settings.SettingsView">
+
+  <UserControl.Styles>
+    <StyleInclude Source="avares://PasswordManager/Views/Settings/SettingsStyles.axaml"/>
+  </UserControl.Styles>
+
+  <Grid>
+    <StackPanel Classes="Wrapper">
+      <Label Classes="Input" x:Name="confirmLabel" IsVisible="False"/>
+      
+      <!-- Change Master Password Panel -->
+      <StackPanel x:Name="ConfirmChangeMasterPasswordPanel" IsVisible="False">
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="Input" Content="Confirm" Click="ConfirmChangeMasterPasswordClick" IsDefault="True"/>
+          <Button Classes="Input" Content="Cancel" Click="CancelChangeMasterPasswordClick" IsCancel="True"/>
+        </StackPanel>
+      </StackPanel>
+
+      <StackPanel x:Name="NewMasterPasswordPanel" IsVisible="False">
+        <TextBox Classes="Input" x:Name="NewMasterPassword" PasswordChar="*"/>
+        <CheckBox Content="Show Password" IsCheckedChanged="MPCheckBoxChanged"/>
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="Input" Content="Save" Click="SaveNewMasterPasswordClick" IsDefault="True"/>
+          <Button Classes="Input" Content="Back" Click="FinalBackClick" IsCancel="True"/>
+        </StackPanel>
+      </StackPanel>
+
+      <!-- Change Emergency Password Panel -->
+      <StackPanel x:Name="ConfirmChangeEmergencyPasswordPanel" IsVisible="False">
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="Input" Content="Confirm" Click="ConfirmChangeEmergencyPasswordClick" IsDefault="True"/>
+          <Button Classes="Input" Content="Cancel" Click="CancelChangeEmergencyPasswordClick" IsCancel="True"/>
+        </StackPanel>
+      </StackPanel>
+
+      <StackPanel x:Name="NewEmergencyPasswordPanel" IsVisible="False">
+        <TextBox Classes="Input" x:Name="NewEmergencyPassword" PasswordChar="*"/>
+        <CheckBox Content="Show Password" IsCheckedChanged="EPCheckBoxChanged"/>
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="Input" Content="Save" Click="SaveEmergencyPasswordClick" IsDefault="True"/>
+          <Button Classes="Input" Content="Back" Click="FinalBackClick" IsCancel="True"/>
+        </StackPanel>
+      </StackPanel>
+
+      <!-- First Buttons Panel -->
+      <StackPanel x:Name="FirstButtonsPanel" IsVisible="True">
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="Input" Content="Change Master Password" Click="ChangeMasterPasswordClick"/>
+          <Button Classes="Input" Content="Change Emergency Password" Click="ChangeEmergencyPasswordClick"/>
+        </StackPanel>
+        <StackPanel>
+          <Button Classes="Input Back" Content="Back" Click="BackClick" IsCancel="True"/>
+        </StackPanel>
+      </StackPanel>
+
+    </StackPanel>
+  </Grid>
+</UserControl>

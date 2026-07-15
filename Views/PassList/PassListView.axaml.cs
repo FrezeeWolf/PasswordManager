@@ -17,10 +17,10 @@ public partial class PassListView : UserControl
         var window = TopLevel.GetTopLevel(this) as MainWindow;
             window?.Navigate(new Views.Login.LoginView());
     }
-    private void LockClick(object? sender, RoutedEventArgs e)
+    private void SettingsClick(object? sender, RoutedEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this) as MainWindow;
-        window?.Navigate(new Views.Login.LoginView());
+        window?.Navigate(new Views.Settings.SettingsView());
     }
     private void AddClick(object? sender, RoutedEventArgs e)
     {

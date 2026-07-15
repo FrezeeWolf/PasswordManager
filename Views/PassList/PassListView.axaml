@@ -14,7 +14,7 @@
               <Grid Grid.Row="0" Classes="Header" ColumnDefinitions="Auto, *, Auto">
                 <Button Grid.Column="0" Content="Back" Classes="Back apps" Click="BackClick" IsCancel="True"/>
                 <Button Grid.Column="1" Content="Add" Classes="Add apps" Click="AddClick" IsDefault="True"/>
-                <Button Grid.Column="2" Content="Lock" Classes="Lock apps" Click="LockClick"/>
+                <Button Grid.Column="2" Content="Settings" Classes="Lock apps" Click="SettingsClick"/>
               </Grid>
 
               <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">

@@ -26,6 +26,7 @@ public partial class LoginView : UserControl
     
     public static class Session
     {
+        public static string? Salt {get; set;}
         public static byte[]? DEK {get; set;}
         public static void Clear()
         {
@@ -109,7 +110,7 @@ public partial class LoginView : UserControl
         }
     }
 
-    private string ComputeHash(string text, string salt)
+    public static string ComputeHash(string text, string salt)
     {
         using var sha = SHA256.Create();
 
@@ -131,6 +132,7 @@ public partial class LoginView : UserControl
             //декрипт для дальнейшего использования
             byte[] dek = Decrypt(encryptedDEK, nonce, tag, masterKey);
             Session.DEK = dek; 
+            Session.Salt = storedSalt;
 
             var window = TopLevel.GetTopLevel(this) as MainWindow;
             window?.Navigate(new Views.PassList.PassListView());
@@ -144,7 +146,7 @@ public partial class LoginView : UserControl
 
 
 
-    private byte[] DeriveKey(string password, string salt)
+    public static byte[] DeriveKey(string password, string salt)
     {
         return Rfc2898DeriveBytes.Pbkdf2(
             password,
@@ -153,7 +155,7 @@ public partial class LoginView : UserControl
             HashAlgorithmName.SHA256,
             32);
     }
-    private (byte[] encdek, byte[] nonce, byte[] tag) Encrypt(byte[] DEK, byte[] masterKey)
+    public static (byte[] encdek, byte[] nonce, byte[] tag) Encrypt(byte[] DEK, byte[] masterKey)
     {
         byte[] nonce = RandomNumberGenerator.GetBytes(12);
 
@@ -247,7 +249,7 @@ public partial class LoginView : UserControl
         }
     }
 
-    private byte[] Decrypt(byte[] encryptedDEK, byte[] nonce, byte[] tag, byte[] masterKey)
+    public static byte[] Decrypt(byte[] encryptedDEK, byte[] nonce, byte[] tag, byte[] masterKey)
     {
         byte[] decryptedDEK = new byte[encryptedDEK.Length];
 
